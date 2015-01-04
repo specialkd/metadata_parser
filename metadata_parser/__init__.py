@@ -5,7 +5,7 @@ import re
 import requests
 
 from bs4 import BeautifulSoup
-import urlparse
+import urllib.parse
 
 
 RE_bad_title = re.compile(
@@ -76,7 +76,7 @@ def is_parsed_valid_url(parsed, require_public_netloc=True, http_only=True):
             defaults True
             requires http or https for the scheme
     """
-    assert isinstance(parsed, urlparse.ParseResult)
+    assert isinstance(parsed, urllib.parse.ParseResult)
     log.debug("is_parsed_valid_url = %s", parsed)
     if not all((parsed.scheme, parsed.netloc)):
         log.debug(" FALSE - missing `scheme` or `netloc`")
@@ -145,7 +145,7 @@ def is_parsed_valid_url(parsed, require_public_netloc=True, http_only=True):
 
 def is_parsed_valid_relative(parsed):
     """returns bool"""
-    assert isinstance(parsed, urlparse.ParseResult)
+    assert isinstance(parsed, urllib.parse.ParseResult)
     if parsed.path and not any((parsed.scheme, parsed.hostname)):
         return True
     return False
@@ -153,7 +153,7 @@ def is_parsed_valid_relative(parsed):
 
 def parsed_to_relative(parsed):
     """turns a parsed url into a full relative url"""
-    assert isinstance(parsed, urlparse.ParseResult)
+    assert isinstance(parsed, urllib.parse.ParseResult)
     _path = parsed.path
     # cleanup, might be unnecessary now
     if _path and _path[0] != "/":
@@ -173,7 +173,7 @@ def is_url_valid(url, require_public_netloc=None):
     """
     if url is None:
         return False
-    parsed = urlparse.urlparse(url)
+    parsed = urllib.parse.urlparse(url)
     if is_parsed_valid_url(parsed, require_public_netloc=require_public_netloc):
         return parsed
     return False
@@ -202,7 +202,7 @@ def url_to_absolute_url(url_test, url_fallback=None, require_public_netloc=None)
     if url_test is None and url_fallback is not None:
         return url_fallback
 
-    parsed = urlparse.urlparse(url_test)
+    parsed = urllib.parse.urlparse(url_test)
 
     _path = parsed.path
     if _path:
@@ -236,7 +236,7 @@ def url_to_absolute_url(url_test, url_fallback=None, require_public_netloc=None)
         # ok, the URL isn't valid
         # can we re-assemble it
         if url_fallback:
-            parsed_fallback = urlparse.urlparse(url_fallback)
+            parsed_fallback = urllib.parse.urlparse(url_fallback)
             if is_parsed_valid_url(
                 parsed_fallback,
                 require_public_netloc=require_public_netloc
@@ -429,7 +429,7 @@ class MetadataParser(object):
         """
         # should we even download/parse this?
         if not force_parse and self.only_parse_file_extensions is not None:
-            parsed = urlparse.urlparse(self.url)
+            parsed = urllib.parse.urlparse(self.url)
             path = parsed.path
             if path:
                 url_fpath = path.split('.')
@@ -486,7 +486,7 @@ class MetadataParser(object):
 
             # lowercase all of the HTTP headers for comparisons per RFC 2616
             self.response_headers = dict((k.lower(), v)
-                                         for k, v in r.headers.items())
+                                         for k, v in list(r.headers.items()))
             self.url_actual = r.url
 
             if r.status_code != 200:

@@ -100,7 +100,7 @@ docs = {
 }
 
 # setup the test_docs with html bodies
-for test in docs.keys():
+for test in list(docs.keys()):
     head = ''
     if docs[test]['head']['url-og'] is not None:
         head += """<meta property="og:url" content="%s"/>""" % \

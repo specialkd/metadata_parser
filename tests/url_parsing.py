@@ -1,5 +1,5 @@
 import metadata_parser
-import urlparse
+import urllib.parse
 
 import unittest
 
@@ -52,10 +52,10 @@ class TestUrls(unittest.TestCase):
     """
     def test_urls_good(self):
         for i in URLS_GOOD:
-            parsed = urlparse.urlparse(i)
+            parsed = urllib.parse.urlparse(i)
             self.assertTrue(metadata_parser.is_parsed_valid_url(parsed))
 
     def test_urls_bad(self):
         for i in URLS_BAD:
-            parsed = urlparse.urlparse(i)
+            parsed = urllib.parse.urlparse(i)
             self.assertFalse(metadata_parser.is_parsed_valid_url(parsed))
